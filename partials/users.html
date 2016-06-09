@@ -1,0 +1,99 @@
+<style type="text/css">
+    td {
+        min-width: 40px;
+    }
+</style>
+
+<div  ng-if="!isAuthenticated()">
+    <header style="margin-bottom: 15px;">
+        
+        <form>
+            <div class="input-group">
+                <input  type="email" 
+                        name="email" 
+                        class="form-control"
+                        placeholder="Email"
+                        ng-model="email"
+                        style="width: 60%">
+                <input  style="width: 40%"
+                        type="password" 
+                        name="password" 
+                        class="form-control"
+                        placeholder="Password"
+                        ng-model="pass">
+                <span class="input-group-btn"><button class="btn btn-primary" ng-click="login(email, pass)">Log in</button></span>
+            </div>
+        </form>
+        <div style="margin-top: 20px;">
+            <a ui-sref="newUser" class="btn-primary btn-lg nodecoration">Registration</a>
+        </div>
+    </header>
+</div>
+
+<div ng-if="isAuthenticated()" ng-controller="UserListController">
+    <h3>User search</h3>
+<section class="search-form text-center">
+        <form>
+        <div class="input-group">
+            <input  type="text" 
+                    name="keywords" 
+                    class="form-control"
+                    placeholder="Name"
+                    ng-model="keywords"
+                    style="width: 50%"
+                    typeahead="name for name in names | filter:$viewValue | limitTo:8">
+            <input  style="width: 20%"
+                    type="number" 
+                    name="age" 
+                    class="form-control"
+                    placeholder="Age"
+                    ng-model="age">
+            <select class="form-control"
+                    style="width: 30%"
+                    ng-model="city" 
+                    placeholder="City">
+                <option value="">City</option>
+                <option>Киев</option>
+                <option>Чернигов</option>
+                <option>Харьков</option>
+                <option>Львов</option>
+            </select>
+            <span class="input-group-btn"><button class="btn btn-primary" ng-click="search(keywords, city, age)">Search</button></span>
+            </div>
+        </form>
+</section>
+<div class="row">
+    <div class="pull-right col-sm-6 col-sm-offset-6" style="margin: 10px 0 10px;">
+        <form class="form-inline pull-rigth">
+            <label for="sel">Items per page: </label> 
+                <div id="sel" class="form-group">
+                    <select class="form-control" ng-options="option.num for option in numOptions.availableOptions track by option.num" ng-model="numOptions.selectedOption"  ng-change="setItemsPerPage(numOptions.selectedOption.num)"></select>
+            </div>
+        </form>
+</div>
+</div>
+
+<div ng-if="numPages > 1" class="content text-center row" ng-include='"partials/pagination.html"'></div>
+
+<table class="table movietable">
+    <tr>
+        <th><a href="" ng-click="SortByFirstName()" id="sortByFirstName" class="">Name</a></th>
+        <th><a href="" ng-click="SortByLastName()" id="sortByLastName" class="">Last name</a></th>
+        <th><a href="" ng-click="SortByAge()" id="sortByAge" class="">Age</a></th>
+        <th>City</th>
+        <th></th>
+    </tr>
+    <tr ng-repeat="user in users.slice((currentPage-1)*itemsPerPage,currentPage*itemsPerPage)"">
+        <td>{{user.first_name}}</td>
+        <td>{{user.last_name}}</td>
+        <td style="width: 40px;">{{user.age}}</td>
+        <td>{{user.city}}</td>
+        <td class="text-right">
+            <a class="btn btn-primary" ui-sref="viewUser({id:user.id})">View</a>
+        </td>
+    </tr>
+</table>
+
+<div ng-if="numPages > 1" class="content text-center" ng-include='"partials/pagination.html"'></div>
+
+</div>
