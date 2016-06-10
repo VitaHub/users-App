@@ -1,3 +1,9 @@
+<style type="text/css">
+	span {
+		cursor: default;
+	}
+</style>
+
 <nav>
 		<ul class="pagination">
 		<li>
@@ -10,15 +16,15 @@
     			<span aria-hidden="true">&lsaquo;</span>
   			</a>
 		</li>
-		<li ng-if="(currentPage - 4) > 0 && currentPage === numPages"><a ng-click="goToPage(currentPage - 4)">{{ currentPage - 4}}</a></li>
-		<li ng-if="(currentPage - 3) > 0 && (currentPage === (numPages - 1) || currentPage === numPages)"><a ng-click="goToPage(currentPage - 3)">{{ currentPage - 3}}</a></li>
+		<li ng-if="(currentPage - 4) > 0 && currentPage === numPages"><a ng-click="goToPage(currentPage - 4)"><span>{{ currentPage - 4}}</span></a></li>
+		<li ng-if="(currentPage - 3) > 0 && (currentPage === (numPages - 1) || currentPage === numPages)"><a ng-click="goToPage(currentPage - 3)"><span>{{ currentPage - 3}}</span></a></li>
 	    <li ng-if="currentPage > 2"><a ng-click="goToPage(currentPage - 2)">{{ currentPage - 2 }}</a></li>
-	    <li ng-if="currentPage > 1"><a ng-click="previousPage()">{{ currentPage - 1}}</a></li>
-	    <li class="active"><a>{{ currentPage }}</a></li>
-	    <li ng-if="(currentPage + 1) <= numPages"><a ng-click="nextPage()">{{ currentPage + 1}}</a></li>
-	    <li ng-if="(currentPage + 2) <= numPages"><a ng-click="goToPage(currentPage + 2)">{{ currentPage + 2}}</a></li>
-	    <li ng-if="(currentPage + 3) <= numPages && (currentPage === 2 || currentPage === 1)"><a ng-click="goToPage(currentPage + 3)">{{ currentPage + 3}}</a></li>
-	    <li ng-if="(currentPage + 4) <= numPages && currentPage === 1"><a ng-click="goToPage(currentPage + 4)">{{ currentPage + 4}}</a></li>
+	    <li ng-if="currentPage > 1"><a ng-click="previousPage()"><span>{{ currentPage - 1}}</span></a></li>
+	    <li class="active"><a><span>{{ currentPage }}</span></a></li>
+	    <li ng-if="(currentPage + 1) <= numPages"><a ng-click="nextPage()"><span>{{ currentPage + 1}}</span></a></li>
+	    <li ng-if="(currentPage + 2) <= numPages"><a ng-click="goToPage(currentPage + 2)"><span>{{ currentPage + 2}}</span></a></li>
+	    <li ng-if="(currentPage + 3) <= numPages && (currentPage === 2 || currentPage === 1)"><a ng-click="goToPage(currentPage + 3)"><span>{{ currentPage + 3}}</span></a></li>
+	    <li ng-if="(currentPage + 4) <= numPages && currentPage === 1"><a ng-click="goToPage(currentPage + 4)"><span>{{ currentPage + 4}}</span></a></li>
 		<li>
   			<a ng-click="nextPage()" aria-label="Next">
     			<span aria-hidden="true">&rsaquo;</span>

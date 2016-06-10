@@ -248,7 +248,6 @@ angular.module('usersApp.controllers',[])
 
     function pageNum() {
         $scope.numPages = Math.ceil($scope.users.length / $scope.itemsPerPage);
-        // window.alert($scope.numPages);
     };
         /* Pagination (end) */
 
@@ -264,6 +263,7 @@ angular.module('usersApp.controllers',[])
             	$cookieStore.remove('authToken');
 	            $cookieStore.remove('authEmail');
 	            $cookieStore.remove('authId');
+	            $window.location.href='';
             });
         }
     }
