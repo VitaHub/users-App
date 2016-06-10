@@ -1,9 +1,16 @@
 angular.module('usersApp.controllers',[])
-.controller('UserLoginController', function($scope, Auth, $state, $window, $rootScope) {
+.controller('UserLoginController', function($scope, Auth, $state, $window, $cookieStore) {
 
     $scope.isAuthenticated = function() {
-        return Auth.isAuthenticated();
+    	var auth = $cookieStore.get('authToken');
+        if (auth !== undefined) {
+        	return true;
+        } else {
+        	return false;
+        }
     };
+
+    $scope.currentUserId = $cookieStore.get('authId');
 
     $scope.login = function(email, pass) {
         loginUser(email, pass);
@@ -21,37 +28,28 @@ angular.module('usersApp.controllers',[])
         };
 
         Auth.login(credentials, config).then(function(user) {
-            console.log(user); // => {id: 1, ect: '...'}
-            $rootScope.token = user.token;
-            $rootScope.email = user.email;
-            $rootScope.currentUserId = user.id;
+            $cookieStore.put('authToken', user.token);
+            $cookieStore.put('authEmail', user.email);
+            $cookieStore.put('authId', user.id);
             $scope.currentUserId = user.id;
         }, function(error) {
             // Authentication failed...
             window.alert("Invalid email or password!");
         });
-
-        $scope.$on('devise:login', function(event, currentUser) {
-            // after a login, a hard refresh, a new tab
-        });
-
-        $scope.$on('devise:new-session', function(event, currentUser) {
-            // user logged in by Auth.login({...})
-        });
     };
 
     $scope.logOut = function() {
         Auth.logout().then(function() {
-            $rootScope.token = "";
-            $rootScope.email = "";
-            $window.location.href='';
+            $cookieStore.remove('authToken');
+            $cookieStore.remove('authEmail');
+            $cookieStore.remove('authId');
         }, function(error) {
             window.alert(error);
         });
     };
 
 
-}).controller('UserListController',function($scope,$state,popupService,$window,User,Auth,$rootScope){
+}).controller('UserListController',function($scope,$state,popupService,$window,User,Auth){
 
     var allUsers = User.query(function() {
         GetAllNames(); 
@@ -254,28 +252,64 @@ angular.module('usersApp.controllers',[])
     };
         /* Pagination (end) */
 
-}).controller('UserViewController',function($scope,$stateParams,$state,popupService,$window,User,$rootScope, Auth){
+}).controller('UserViewController',function($scope,$stateParams,$state,popupService,$window,User, $cookieStore){
 
-    $scope.currentUserId = $rootScope.currentUserId;
+    $scope.currentUserId = $cookieStore.get('authId');
 
     $scope.user = User.get({id:$stateParams.id});
 
     $scope.deleteUser=function(user){
         if(popupService.showPopup('Really delete user?')){
             user.$delete(function(){
-                $window.location.href='';
+            	$cookieStore.remove('authToken');
+	            $cookieStore.remove('authEmail');
+	            $cookieStore.remove('authId');
             });
         }
     }
 
-}).controller('UserCreateController',function($scope,$state,$stateParams,User, Auth,$window){
+}).controller('UserCreateController',function($scope,$state,$stateParams,User, $cookieStore, $window, Auth){
 
     $scope.user = new User();
 
+    $scope.isAuthenticated = function() {
+    	var auth = $cookieStore.get('authToken');
+        if (auth !== undefined) {
+        	return true;
+        } else {
+        	return false;
+        }
+    };
+
+	if ($scope.isAuthenticated()) {
+		$window.location.href='';
+	};
+
+    function loginUser(email, pass) {
+        var credentials = {
+            email: email,
+            password: pass
+        };
+        var config = {
+            headers: {
+                'X-HTTP-Method-Override': 'POST'
+            }
+        };
+
+        Auth.login(credentials, config).then(function(user) {
+            console.log(user); // => {id: 1, ect: '...'}
+            $cookieStore.put('authToken', user.token);
+            $cookieStore.put('authEmail', user.email);
+            $cookieStore.put('authId', user.id);
+            $window.location.href='';
+        });
+    };
+
     $scope.addUser=function(){
+    	var pass = $scope.user.password;
+    	var email = $scope.user.email;
         $scope.user.$save(function(){
-            $state.go('users');
-            window.alert("Registration completed successfully. Please log in.");
+        	loginUser(email, pass);
         }, function(error) {
             $scope.errorsPresent = true;
             $scope.errors = error;
@@ -283,11 +317,21 @@ angular.module('usersApp.controllers',[])
 
     };
 
-}).controller('UserEditController',function($scope,$state,$stateParams,User, Auth){
+}).controller('UserEditController',function($scope,$state,$stateParams,User, $cookieStore, $location){
 
-    $scope.updateUser=function(){
+	var userId = $cookieStore.get('authId');
+
+	if (userId === undefined) {
+		$window.location.href='';
+	};
+
+	if (userId != $stateParams.id) {
+		$state.go('users');
+	};
+
+    $scope.updateUser = function(){
         $scope.user.$update(function(){
-            $state.go('users');
+            $location.path('users/' + userId + '/view');
         }, function(error) {
             $scope.errorsPresent = true;
             $scope.errors = error;

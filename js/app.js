@@ -1,6 +1,6 @@
-angular.module('usersApp',['ui.router','ngResource','usersApp.controllers','usersApp.services', 'ui.bootstrap', 'Devise']);
+angular.module('usersApp',['ui.router','ngResource','usersApp.controllers','usersApp.services', 'ui.bootstrap', 'Devise', 'ngCookies']);
 
-angular.module('usersApp').config(function($stateProvider,$httpProvider, AuthProvider){
+angular.module('usersApp').config(function($stateProvider,$httpProvider, AuthProvider ){
     AuthProvider.loginPath('https://rails-crud-api.herokuapp.com/api/v1/sessions');
     AuthProvider.loginMethod('POST');
     AuthProvider.logoutPath('');
@@ -8,7 +8,6 @@ angular.module('usersApp').config(function($stateProvider,$httpProvider, AuthPro
     $stateProvider.state('users',{
         url:'/users',
         templateUrl:'partials/users.html',
-        // controller:'UserListController'
     }).state('viewUser',{
        url:'/users/:id/view',
        templateUrl:'partials/user-view.html',
@@ -23,5 +22,5 @@ angular.module('usersApp').config(function($stateProvider,$httpProvider, AuthPro
         controller:'UserEditController'
     });
 }).run(function($state){
-   $state.go('users');
+    $state.go('users');
 });
