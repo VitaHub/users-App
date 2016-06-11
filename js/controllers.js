@@ -43,6 +43,7 @@ angular.module('usersApp.controllers',[])
             $cookieStore.remove('authToken');
             $cookieStore.remove('authEmail');
             $cookieStore.remove('authId');
+            $window.location.href='';
         }, function(error) {
             window.alert(error);
         });
@@ -253,7 +254,27 @@ angular.module('usersApp.controllers',[])
 
 }).controller('UserViewController',function($scope,$stateParams,$state,popupService,$window,User, $cookieStore){
 
-    $scope.currentUserId = $cookieStore.get('authId');
+	$scope.isAuthenticated = function() {
+    	var auth = $cookieStore.get('authToken');
+        if (auth !== undefined) {
+        	return true;
+        } else {
+        	return false;
+        }
+    };
+
+	if ($scope.isAuthenticated() == false) {
+		$window.location.href='';
+	};
+
+    $scope.currentUserId = function(Id) {
+    	var id = Id || 0;
+    	if ($cookieStore.get('authId') == id) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    };
 
     $scope.user = User.get({id:$stateParams.id});
 
@@ -317,7 +338,7 @@ angular.module('usersApp.controllers',[])
 
     };
 
-}).controller('UserEditController',function($scope,$state,$stateParams,User, $cookieStore, $location){
+}).controller('UserEditController',function($scope,$state,$stateParams,User, $cookieStore, $location, $window){
 
 	var userId = $cookieStore.get('authId');
 
